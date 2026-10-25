@@ -118,11 +118,15 @@ CREATE POLICY "service_booking_items_select" ON service_booking_items
 CREATE POLICY "boarding_stays_select" ON boarding_stays
     FOR SELECT USING (
         has_permission('grooming.manage')
-        OR branch_id = ANY(user_branch_ids())
         OR EXISTS (
             SELECT 1 FROM service_bookings sb
-            JOIN customers c ON c.id = sb.customer_id
-            WHERE sb.id = boarding_stays.booking_id AND c.auth_user_id = auth.uid()
+            WHERE sb.id = boarding_stays.booking_id
+            AND (
+                sb.branch_id = ANY(user_branch_ids())
+                OR sb.customer_id IN (
+                    SELECT c.id FROM customers c WHERE c.auth_user_id = auth.uid()
+                )
+            )
         )
     );
 

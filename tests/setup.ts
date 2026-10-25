@@ -42,11 +42,3 @@ vi.mock("@/lib/supabase", () => ({
 
 // Mock fetch globally
 global.fetch = vi.fn();
-
-// Mock crypto for UUID generation
-if (!globalThis.crypto) {
-  // @ts-ignore
-  globalThis.crypto = {
-    randomUUID: () => "00000000-0000-0000-0000-000000000000",
-  };
-}

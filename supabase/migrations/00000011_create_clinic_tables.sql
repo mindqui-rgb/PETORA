@@ -151,24 +151,6 @@ CREATE TABLE treatment_records (
 );
 
 -- ============================================================
--- Medication Dispensings (append-only)
--- ============================================================
-CREATE TABLE medication_dispensings (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    visit_id UUID REFERENCES visits(id) ON DELETE RESTRICT,
-    hospitalization_id UUID REFERENCES hospitalizations(id) ON DELETE RESTRICT,
-    prescription_item_id UUID REFERENCES prescription_items(id) ON DELETE RESTRICT,
-    product_id UUID NOT NULL REFERENCES products(id) ON DELETE RESTRICT,
-    location_id UUID NOT NULL REFERENCES inventory_locations(id) ON DELETE RESTRICT,
-    quantity NUMERIC(14,3) NOT NULL CHECK (quantity > 0),
-    unit_cost_snapshot NUMERIC(14,4),
-    unit_price_snapshot NUMERIC(14,2),
-    reason TEXT NOT NULL CHECK (reason IN ('PRESCRIPTION', 'PROCEDURE', 'WARD')),
-    dispensed_by UUID NOT NULL,
-    dispensed_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
--- ============================================================
 -- Indexes
 -- ============================================================
 CREATE INDEX idx_appointments_branch ON appointments(branch_id, starts_at);
